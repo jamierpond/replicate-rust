@@ -33,6 +33,10 @@
 
 use std::collections::HashMap;
 
+fn default_client() -> reqwest::blocking::Client {
+    reqwest::blocking::Client::builder().use_rustls_tls().build().unwrap()
+}
+
 use crate::{
     api_definitions::{CreatePrediction, GetPrediction, PredictionStatus, PredictionsUrls},
     errors::ReplicateError,
@@ -119,7 +123,7 @@ impl PredictionClient {
         };
 
         // println!("Payload : {:?}", &payload);
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
         let response = client
             .post(format!("{}/predictions", rep.base_url))
             .header("Authorization", format!("Token {}", rep.auth))
@@ -176,7 +180,7 @@ impl PredictionClient {
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn reload(&mut self) -> Result<(), ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .get(format!("{}/predictions/{}", self.parent.base_url, self.id))
@@ -230,7 +234,7 @@ impl PredictionClient {
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn cancel(&mut self) -> Result<(), ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
         let response = client
             .post(format!(
                 "{}/predictions/{}/cancel",
@@ -276,7 +280,7 @@ impl PredictionClient {
     pub fn wait(&self) -> Result<GetPrediction, ReplicateError> {
         // TODO : Implement a retry policy
         let retry_policy = RetryPolicy::new(5, RetryStrategy::FixedDelay(1000));
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         loop {
             let response = client

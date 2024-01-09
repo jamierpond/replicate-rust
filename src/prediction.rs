@@ -61,6 +61,10 @@
 use serde::Serialize;
 use std::collections::HashMap;
 
+fn default_client() -> reqwest::blocking::Client {
+    reqwest::blocking::Client::builder().use_rustls_tls().build().unwrap()
+}
+
 use crate::{
     api_definitions::{GetPrediction, ListPredictions},
     errors::ReplicateError,
@@ -150,7 +154,7 @@ impl Prediction {
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn list(&self) -> Result<ListPredictions, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .get(format!("{}/predictions", self.parent.base_url))
@@ -185,7 +189,7 @@ impl Prediction {
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn get(&self, id: &str) -> Result<GetPrediction, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .get(format!("{}/predictions/{}", self.parent.base_url, id))
