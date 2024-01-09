@@ -11,7 +11,7 @@ authors = ["Shubhamai"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-reqwest = {version = "0.11.20", features = ["json", "blocking"]}
+reqwest = {version = "0.11.20", features = ["json", "blocking", "rustls-tls-webpki-roots" ]}
 serde = {version = "1.0.186", features = ["derive"]}
 serde_json = "1.0.105"
 thiserror = "1.0.47"

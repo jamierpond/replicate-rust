@@ -70,7 +70,7 @@ impl Model {
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn get(&self, model_owner: &str, model_name: &str) -> Result<GetModel, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = reqwest::blocking::Client::builder().use_rustls_tls().build()?;
 
         let response = client
             .get(format!(
