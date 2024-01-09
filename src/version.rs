@@ -27,7 +27,7 @@
 
 use crate::{
     api_definitions::{GetModelVersion, ListModelVersions},
-    errors::ReplicateError,
+    errors::ReplicateError, prediction::default_client,
 };
 
 /// Used to interact with the [Model Versions Endpoints](https://replicate.com/docs/refer   ence/http#models.versions.get).
@@ -67,7 +67,7 @@ impl Version {
         model_name: &str,
         version_id: &str,
     ) -> Result<GetModelVersion, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .get(format!(
@@ -105,7 +105,7 @@ impl Version {
         model_owner: &str,
         model_name: &str,
     ) -> Result<ListModelVersions, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .get(format!(

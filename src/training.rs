@@ -6,10 +6,10 @@
 //! ```
 //! use replicate_rust::{Replicate, config::Config, training::TrainingOptions};
 //! use std::collections::HashMap;
-//! 
+//!
 //! let config = Config::default();
 //! let replicate = Replicate::new(config);
-//! 
+//!
 //! let mut input = HashMap::new();
 //! input.insert(String::from("train_data"), String::from("https://example.com/70k_samples.jsonl"));
 //!
@@ -31,6 +31,7 @@
 
 use std::collections::HashMap;
 
+use crate::prediction::default_client;
 use crate::{api_definitions::{CreateTraining, GetTraining, ListTraining, WebhookEvents}, errors::ReplicateError};
 
 /// Contains all the options for creating a training.
@@ -45,7 +46,7 @@ pub struct TrainingOptions {
     /// An HTTPS URL for receiving a webhook when the training completes. The webhook will be a POST request where the request body is the same as the response body of the get training operation. If there are network problems, we will retry the webhook a few times, so make sure it can be safely called more than once.
     pub webhook: String,
 
-    /// TO only send specifc events to the webhook, use this field. If not specified, all events will be sent. TODO : Add this to the API 
+    /// TO only send specifc events to the webhook, use this field. If not specified, all events will be sent. TODO : Add this to the API
     pub _webhook_events_filter: Option<WebhookEvents>,
 }
 
@@ -80,7 +81,7 @@ impl Training {
     }
 
     /// Create a new training.
-    /// 
+    ///
     /// # Arguments
     /// * `model_owner` - The name of the user or organization that owns the model.
     /// * `model_name` - The name of the model.
@@ -90,18 +91,18 @@ impl Training {
     ///    * `input` - An object containing inputs to the Cog model's train() function.
     ///   * `webhook` - An HTTPS URL for receiving a webhook when the training completes. The webhook will be a POST request where the request body is the same as the response body of the get training operation. If there are network problems, we will retry the webhook a few times, so make sure it can be safely called more than once.
     ///  * `_webhook_events_filter` - TO only send specifc events to the webhook, use this field. If not specified, all events will be sent. The following events are supported:
-    /// 
+    ///
     /// # Example
     /// ```
     /// use replicate_rust::{Replicate, config::Config, training::TrainingOptions};
     /// use std::collections::HashMap;
-    /// 
+    ///
     /// let config = Config::default();
     /// let replicate = Replicate::new(config);
-    /// 
+    ///
     /// let mut input = HashMap::new();
     /// input.insert(String::from("training_data"), String::from("https://example.com/70k_samples.jsonl"));
-    /// 
+    ///
     /// let result = replicate.trainings.create(
     ///    "owner",
     ///    "model",
@@ -113,10 +114,10 @@ impl Training {
     ///     _webhook_events_filter: None,
     /// },
     /// )?;
-    /// 
+    ///
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
-    /// 
+    ///
     pub fn create(
         &self,
         model_owner: &str,
@@ -124,7 +125,7 @@ impl Training {
         version_id: &str,
         options: TrainingOptions,
     ) -> Result<CreateTraining, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let payload = CreateTrainingPayload {
             destination: options.destination,
@@ -154,24 +155,24 @@ impl Training {
 
 
     /// Get the details of a training.
-    /// 
+    ///
     /// # Arguments
     /// * `training_id` - The ID of the training you want to get.
-    /// 
+    ///
     /// # Example
     /// ```
     /// use replicate_rust::{Replicate, config::Config};
-    /// 
+    ///
     /// let config = Config::default();
     /// let replicate = Replicate::new(config);
-    /// 
+    ///
     /// let training = replicate.trainings.get("zz4ibbonubfz7carwiefibzgga")?;
     /// println!("Training : {:?}", training);
-    /// 
+    ///
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
-    /// ``` 
+    /// ```
     pub fn get(&self, training_id: &str) -> Result<GetTraining, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .get(format!(
@@ -193,21 +194,21 @@ impl Training {
     }
 
     /// Get a paginated list of trainings that you've created with your account. Returns 100 records per page.
-    /// 
+    ///
     /// # Example
     /// ```
     /// use replicate_rust::{Replicate, config::Config};
-    /// 
+    ///
     /// let config = Config::default();
     /// let replicate = Replicate::new(config);
-    /// 
+    ///
     /// let trainings = replicate.trainings.list()?;
     /// println!("Trainings : {:?}", trainings);
-    /// 
+    ///
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn list(&self) -> Result<ListTraining, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .get(format!("{}/trainings", self.parent.base_url,))
@@ -226,24 +227,24 @@ impl Training {
     }
 
     /// Cancel a training.
-    /// 
+    ///
     /// # Arguments
     /// * `training_id` - The ID of the training you want to cancel.
-    /// 
+    ///
     /// # Example
     /// ```
     /// use replicate_rust::{Replicate, config::Config};
-    /// 
+    ///
     /// let config = Config::default();
     /// let replicate = Replicate::new(config);
-    /// 
+    ///
     /// let result =  replicate.trainings.cancel("zz4ibbonubfz7carwiefibzgga")?;
     /// println!("Result : {:?}", result);
-    /// 
+    ///
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn cancel(&self, training_id: &str) -> Result<GetTraining, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .post(format!(
@@ -444,7 +445,7 @@ mod tests {
                   }
                 ]
               }
-              
+
             ));
         });
 

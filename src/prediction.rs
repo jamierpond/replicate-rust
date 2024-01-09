@@ -61,7 +61,8 @@
 use serde::Serialize;
 use std::collections::HashMap;
 
-fn default_client() -> reqwest::blocking::Client {
+/// Default client used for making http requests.
+pub fn default_client() -> reqwest::blocking::Client {
     reqwest::blocking::Client::builder().use_rustls_tls().build().unwrap()
 }
 

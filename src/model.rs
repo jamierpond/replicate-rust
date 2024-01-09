@@ -19,6 +19,7 @@
 //! # Ok::<(), replicate_rust::errors::ReplicateError>(())
 //! ```
 
+use crate::prediction::default_client;
 use crate::{api_definitions::GetModel, errors::ReplicateError, version::Version};
 
 // #[derive(Clone)]
@@ -70,7 +71,7 @@ impl Model {
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn get(&self, model_owner: &str, model_name: &str) -> Result<GetModel, ReplicateError> {
-        let client = reqwest::blocking::Client::builder().use_rustls_tls().build()?;
+        let client = default_client();
 
         let response = client
             .get(format!(

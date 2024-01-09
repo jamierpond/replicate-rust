@@ -19,7 +19,7 @@
 
 use crate::{
     api_definitions::{GetCollectionModels, ListCollectionModels},
-    errors::ReplicateError,
+    errors::ReplicateError, prediction::default_client,
 };
 
 /// Used to interact with the [Collection Endpoints](https://replicate.com/docs/reference/http#collections.get).
@@ -51,7 +51,7 @@ impl Collection {
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn get(&self, collection_slug: &str) -> Result<GetCollectionModels, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .get(format!(
@@ -88,7 +88,7 @@ impl Collection {
     /// # Ok::<(), replicate_rust::errors::ReplicateError>(())
     /// ```
     pub fn list(&self) -> Result<ListCollectionModels, ReplicateError> {
-        let client = reqwest::blocking::Client::new();
+        let client = default_client();
 
         let response = client
             .get(format!("{}/collections", self.parent.base_url))

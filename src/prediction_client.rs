@@ -32,10 +32,7 @@
 //! ```
 
 use std::collections::HashMap;
-
-fn default_client() -> reqwest::blocking::Client {
-    reqwest::blocking::Client::builder().use_rustls_tls().build().unwrap()
-}
+use crate::prediction::default_client;
 
 use crate::{
     api_definitions::{CreatePrediction, GetPrediction, PredictionStatus, PredictionsUrls},
